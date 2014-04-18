@@ -1,36 +1,43 @@
 
-/**
- * Module dependencies.
- */
 
-var express = require('express')
-  , routes = require('./routes');
+// server.js
 
-var app = module.exports = express.createServer();
+// BASE SETUP
+// =============================================================================
 
-// Configuration
+// call the packages we need
+var express    = require('express');    // call express
+var app        = express();         // define our app using express
+var bodyParser = require('body-parser');
+var expressHbs = require('express3-handlebars');
 
-app.configure(function(){
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(app.router);
-  app.use(express.static(__dirname + '/public'));
+// setting the template engine for express to use (Express3 Mustache)
+app.engine('hbs', expressHbs({extname:'hbs', defaultLayout:'main.hbs'}));
+app.set('view engine', 'hbs');
+
+// configure app to use bodyParser()
+// this will let us get the data from a POST
+app.use(bodyParser());
+
+var port = process.env.PORT || 3080;    // set our port
+
+// ROUTES FOR OUR API
+// =============================================================================
+var router = express.Router();        // get an instance of the express Router
+
+// test route to make sure everything is working (accessed at GET http://localhost:8080/api)
+router.get('/', function(req, res) {
+  //res.send('hooray! welcome to our api!'); 
+  res.render('index'); 
 });
 
-app.configure('development', function(){
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-});
+// more routes for our API will happen here
 
-app.configure('production', function(){
-  app.use(express.errorHandler());
-});
+// REGISTER OUR ROUTES -------------------------------
+// all of our routes will be prefixed with /api
+app.use('/', router);
 
-// Routes
-
-app.get('/', routes.index);
-
-app.listen(3000, function(){
-  console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
-});
+// START THE SERVER
+// =============================================================================
+app.listen(port);
+console.log('Magic happens on port ' + port);
