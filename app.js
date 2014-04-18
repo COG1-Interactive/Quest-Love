@@ -37,7 +37,13 @@ passport.use(new LocalStrategy(
   }
 ));
 
-var port = process.env.PORT || 3080;    // set our port
+
+var env = process.env.NODE_ENV || 'development';
+if ('development' == env) {
+    var port = 3080;
+} else if ('production' == env) {
+    var port = 80;
+}
 
 // ROUTES FOR OUR API
 // =============================================================================
@@ -65,4 +71,4 @@ app.use('/', router);
 // START THE SERVER
 // =============================================================================
 app.listen(port);
-console.log('Magic happens on port ' + port);
+console.log('Server Listening on Port: ' + port);
