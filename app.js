@@ -38,11 +38,11 @@ passport.use(new LocalStrategy(
 ));
 
 
-var env = process.env.NODE_ENV || 'development';
-if ('development' == env) {
-    var port = 3080;
-} else if ('production' == env) {
+var env = process.env.NODE_ENV || 'staging';
+if ('staging' == env || 'development' == env) {
     var port = 80;
+} else if('development' == env){
+    var port = 3080;
 }
 
 // ROUTES FOR OUR API
