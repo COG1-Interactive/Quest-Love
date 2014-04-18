@@ -39,7 +39,7 @@ passport.use(new LocalStrategy(
 
 
 var env = process.env.NODE_ENV || 'staging';
-if ('staging' == env || 'development' == env) {
+if ('staging' == env || 'production' == env) {
     var port = 80;
 } else if('development' == env){
     var port = 3080;
@@ -51,15 +51,15 @@ var router = express.Router();        // get an instance of the express Router
 
 // test route to make sure everything is working (accessed at GET http://localhost:8080/api)
 router.get('/', function(req, res) {
-  //res.send('hooray! welcome to our api!'); 
   res.render('index'); 
 });
 
 // login route
 router.post('/login',
-  passport.authenticate('local', { successRedirect: '/',
-                                   failureRedirect: '/login',
-                                   failureFlash: true })
+  passport.authenticate('local',
+      {successRedirect: '/',
+       failureRedirect: '/login',
+       failureFlash: true })
 );
 
 // more routes for our API will happen here
