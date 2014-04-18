@@ -1,17 +1,16 @@
-
-
 // server.js
 
 // BASE SETUP
 // =============================================================================
 
 // call the packages we need
-var express    = require('express');    // call express
-var app        = express();         // define our app using express
-var bodyParser = require('body-parser');
-var expressHbs = require('express3-handlebars');
-var passport = require('passport')
-  , LocalStrategy = require('passport-local').Strategy;
+var express    = require('express'),
+    app        = express(),
+    bodyParser = require('body-parser'),
+    expressHbs = require('express3-handlebars'),
+    passport = require('passport'),
+    Bookshelf = require('bookshelf'),
+    LocalStrategy = require('passport-local').Strategy;
 
 // setting the template engine for express to use (Express3 Mustache)
 app.engine('hbs', expressHbs({extname:'hbs', defaultLayout:'main.hbs'}));
@@ -45,27 +44,17 @@ if ('staging' == env || 'production' == env) {
     var port = 3080;
 }
 
-// ROUTES FOR OUR API
-// =============================================================================
-var router = express.Router();        // get an instance of the express Router
+var router = express.Router();
 
-// test route to make sure everything is working (accessed at GET http://localhost:8080/api)
-router.get('/', function(req, res) {
-  res.render('index'); 
-});
+//Importing Routes
+require('./util/bookshelf')(Bookshelf);
+require('./util/auth')(passport);
+require('./routes')(router, passport);
 
-// login route
-router.post('/login',
-  passport.authenticate('local',
-      {successRedirect: '/',
-       failureRedirect: '/login',
-       failureFlash: true })
-);
-
-// more routes for our API will happen here
 
 // REGISTER OUR ROUTES -------------------------------
-// all of our routes will be prefixed with /api
+// all of our routes will be prefixed with /
+
 app.use('/', router);
 
 // START THE SERVER
