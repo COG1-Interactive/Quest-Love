@@ -3,9 +3,8 @@
 <h2>Installation Notes</h2>
 
 <ol>
-    <li>Clone Repository</li>
+    <li>Clone Repository<pre>git clone git@github.com:COG1-Interactive/Quest-Love.git</pre></li>
     <li>Run <pre>npm install</pre></li>
-    <li>If deploy is local run <pre>node app</pre></li>
 </ol>
 
 <h2> Running Locally </h2>
