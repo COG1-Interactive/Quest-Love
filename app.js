@@ -10,6 +10,8 @@ var express    = require('express');    // call express
 var app        = express();         // define our app using express
 var bodyParser = require('body-parser');
 var expressHbs = require('express3-handlebars');
+var passport = require('passport')
+  , LocalStrategy = require('passport-local').Strategy;
 
 // setting the template engine for express to use (Express3 Mustache)
 app.engine('hbs', expressHbs({extname:'hbs', defaultLayout:'main.hbs'}));
@@ -18,6 +20,22 @@ app.set('view engine', 'hbs');
 // configure app to use bodyParser()
 // this will let us get the data from a POST
 app.use(bodyParser());
+
+// Configure Passport
+passport.use(new LocalStrategy(
+  function(username, password, done) {
+    User.findOne({ username: username }, function(err, user) {
+      if (err) { return done(err); }
+      if (!user) {
+        return done(null, false, { message: 'Incorrect username.' });
+      }
+      if (!user.validPassword(password)) {
+        return done(null, false, { message: 'Incorrect password.' });
+      }
+      return done(null, user);
+    });
+  }
+));
 
 var port = process.env.PORT || 3080;    // set our port
 
@@ -30,6 +48,13 @@ router.get('/', function(req, res) {
   //res.send('hooray! welcome to our api!'); 
   res.render('index'); 
 });
+
+// login route
+router.post('/login',
+  passport.authenticate('local', { successRedirect: '/',
+                                   failureRedirect: '/login',
+                                   failureFlash: true })
+);
 
 // more routes for our API will happen here
 
